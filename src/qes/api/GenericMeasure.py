@@ -29,5 +29,19 @@ class GenericMeasure(BaseGenericObject):
     self.number_format = None
 
   # Public attributes and methods.
+  def get_measure(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "GetMeasure"
+    })
+    self.qes._sync_ws_send()
+    measure = self.qes.response.qMeasure
+    self.label = measure.qLabel
+    self.definition = measure.qDef
+    self.grouping = measure.qGrouping
+    self.expressions = measure.qExpressions
+    self.active_expression = measure.qActiveExpression
+    self.label_expression = measure.qLabelExpression
+    self.number_format = measure.qNumFormat
 
   # Private attributes and methods.
