@@ -8,7 +8,7 @@ class GenericBookmark:
   Methods from the Qlik Engine JSON API are converted to Python methods as follows:
     - separate words with underscores
     - lowercase all letters
-  Parameters from the QLik Engine JSON API are converted to Python arguments as follows:
+  Parameters from the Qlik Engine JSON API are converted to Python arguments as follows:
     - remove leading literal "q"
     - separate words with underscores
     - lowercase all letters

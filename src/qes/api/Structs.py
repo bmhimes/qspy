@@ -56,7 +56,7 @@ class Struct(SimpleNamespace):
     - response_struct_keys
     - struct_keys
   """
-  def __init__(self, response_struct_keys, struct_keys = None, resonse = None, result_key = None, empty = False):
+  def __init__(self, response_struct_keys, struct_keys = None, response = None, result_key = None, empty = False):
 
     # Validate input.
 
@@ -128,16 +128,16 @@ class Struct(SimpleNamespace):
       else:
         return_value = response
 
-  def convert_dict(value_obj, value_dict):
+    def convert_dict(value_obj, value_dict):
 
-    for key in value_dict.keys():
+      for key in value_dict.keys():
 
-      if type(value_dict[key]) != SimpleNamespace:
-        setattr(value_obj, prop_key, value_dict[key])
+        if type(value_dict[key]) != SimpleNamespace:
+          setattr(value_obj, prop_key, value_dict[key])
 
-      else:
-        setattr(value_obj, prop_key, SimpleNamespace())
-        convert_dict(getattr(value_obj, prop_key), value_dict[key].__dict__)
+        else:
+          setattr(value_obj, prop_key, SimpleNamespace())
+          convert_dict(getattr(value_obj, prop_key), value_dict[key].__dict__)
 
     if empty == False:
       convert_dict(self, return_value.__dict__)
@@ -503,6 +503,18 @@ class BookmarkFieldItemList(list):
     for item in reponse.qFieldItems:
       self.append(BookmarkFieldItem(Response(json.dumps(item))))
 
+class ObjectList(list):
+  pass
+
+class SheetList(list):
+  pass
+
+class DimensionList(list):
+  pass
+
+class MeasureList(list):
+  pass
+
 @ConcreteStruct
 class BookmarkFieldItem(Struct):
   """
@@ -555,3 +567,13 @@ class NxEngineVersion(Struct):
   """
   response_struct_keys = ['qComponentVersion']
   result_key = 'qVersion'
+
+@ConcreteStruct
+class GenericObjectLayout(Struct):
+  """
+  Qlik Engine JSON API class reference: https://help.qlik.com/en-US/sense-developer/May2022/Subsystems/EngineJSONAPI/Content/models-genericobjectlayout.htm
+  """
+  response_struct_keys = ['qInfo', 'qMeta', 'qExtendsId', 'qHasSoftPatches', 'qError', 'qSelectionInfo', 'qStateName']
+  result_key = None
+  _use_default_init = True
+  _response_substruct = False

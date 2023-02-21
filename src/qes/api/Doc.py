@@ -1,5 +1,8 @@
 from types import SimpleNamespace
-from .Structs import AppScript, NxAppProperties
+from .GenericDimension import GenericDimension
+from .GenericMeasure import GenericMeasure
+from .GenericObject import GenericObject
+from .Structs import AppScript, DimensionList, MeasureList, NxAppProperties, ObjectList, SheetList
 from .Response import Response
 
 class Doc:
@@ -7,7 +10,7 @@ class Doc:
   Methods from the Qlik Engine JSON API are converted to Python methods as follows:
     - separate words with underscores
     - lowercase all letters
-  Parameters from the QLik Engine JSON API are converted to Python arguments as follows:
+  Parameters from the Qlik Engine JSON API are converted to Python arguments as follows:
     - remove leading literal "q"
     - separate words with underscores
     - lowercase all letters
@@ -56,6 +59,12 @@ class Doc:
       #self.last_reload_time = doc_list_entry.last_reload_time
       self.doc_name = doc_list_entry.doc_name
       #self.thumbnail = doc_list_entry.thumbnail
+
+    self.permanent_objects = ObjectList()
+    self.session_objects = ObjectList()
+    self.sheets = SheetList()
+    self.dimensions = DimensionList()
+    self.measures = MeasureList()
 
   # Public attributes and methods.
   def open(self, user_name = "", password = "", serial = "", no_data = False):
@@ -162,3 +171,65 @@ class Doc:
     self.qes.request.update({
       "handle": self._handle
     })
+
+  # Untested methods.
+  def create_session_object(self, session_object_type, object_definition, extends_id = "", meta_def = "", state_name = "", id = ""):
+    self.qes._initialize_request()
+    self.qes.request.update({
+      "method": "CreateSessionObject",
+      "params": [
+        "qInfo": {
+          "qId": id,
+          "qType": session_object_type,
+          "qExtendsId": extends_id,
+          "qMetaDef": meta_def,
+          "qStateName": state_name
+        },
+        object_definition
+      ]
+    })
+    self.qes._sync_ws_send()
+
+  def get_sheets(self):
+    object_definition = {
+      "qAppObjectListDef": {
+        "qType": "sheet",
+        "qData": {
+          "id": "/qInfo/qId"
+        }
+      }
+    }
+    create_session_object(session_object_type = "SheetList", object_definition = object_definition)
+    sheet_list_object = GenericObject(self, self.qes.response)
+    self.session_objects.append(sheet_list_object)
+    sheet_list_object.get_layout()
+    for item in sheet_list_object.layout.app_object_list.items:
+      #self.sheets.append(item) # needs Sheet class.
+
+  def get_dimensions(self):
+    object_definition = {
+      "qDimensionListDef": {
+        "qType": "Dimension",
+        "qData": {}
+      }
+    }
+    create_session_object(session_object_type = "SheetList", object_definition = object_definition)
+    dimension_list_object = GenericObject(self, self.qes.response)
+    self.session_objects.append(dimension_list_object)
+    dimension_list_object.get_layout()
+    for item in dimension_list_object.dimension_list.items:
+      #self.dimensions.append() # needs GenericDimension class.
+
+  def get_measures(self):
+    object_definition = {
+      "qMeasureListDef": {
+        "qType": "Measure",
+        "qData": {}
+      }
+    }
+    create_session_object(session_object_type = "SheetList", object_definition = object_definition)
+    measure_list_object = GenericObject(self, self.qes.response)
+    self.session_objects.append(measure_list_object)
+    measure_list_object.get_layout()
+    for item in measure_list_object.measure_list.items:
+      #self.measures.append() # needs GenericMeasureClass.
