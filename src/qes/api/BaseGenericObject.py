@@ -43,6 +43,18 @@ class BaseGenericObject:
     })
     self.layout = GenericObjectLayout(self.qes.response)
 
+  #TODO: 
+  # ApplyPatches
+  # Approve
+  # GetInfo
+  # GetLayout
+  # GetLinkedObjects
+  # GetProperties
+  # Publish
+  # SetProperties
+  # UnApprove
+  # UnPublish
+
   # Private attributes and methods.
   def _initialize_request(self):
     self.qes._initialize_request()
