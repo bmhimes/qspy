@@ -36,6 +36,6 @@ class GenericDimension(BaseGenericObject):
     self.grouping = dim.qGrouping
     self.field_definitions = dim.qFieldDefs
     self.field_lables = dim.qFieldLabels
-    self.lable_expression = dim.qLabelExpression
+    self.label_expression = dim.qLabelExpression
 
   # Private attributes and methods.
