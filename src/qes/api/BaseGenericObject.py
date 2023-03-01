@@ -36,24 +36,56 @@ class BaseGenericObject:
     self.layout = None
 
   # Public attributes and methods.
+  def approve(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "Approve"
+    })
+    self.qes._sync_ws_send()
+
+  def get_info(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "GetInfo"
+    })
+    self.qes._sync_ws_send()
+    self.id = self.qes.response.qInfo.qId
+    self.type = self.qes.response.qInfo.qType
+
   def get_layout(self):
     self._initialize_request()
     self.qes.request.update({
       "method": "GetLayout"
     })
+    self.qes._sync_ws_send()
     self.layout = GenericObjectLayout(self.qes.response)
+
+  def publish(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "Publish"
+    })
+    self.qes._sync_ws_send()
+
+  def unapprove(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "UnApprove"
+    })
+    self.qes._sync_ws_send()
+
+  def unpublish(self):
+    self._initialize_request()
+    self.qes.request.update({
+      "method": "UnPublish"
+    })
+    self.qes._sync_ws_send()
 
   #TODO: 
   # ApplyPatches
-  # Approve
-  # GetInfo
-  # GetLayout
   # GetLinkedObjects
   # GetProperties
-  # Publish
   # SetProperties
-  # UnApprove
-  # UnPublish
 
   # Private attributes and methods.
   def _initialize_request(self):
